@@ -8,6 +8,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "tcp.h"
 #include "tcp/tcp.h"
 
@@ -1106,6 +1107,7 @@ static inline ucs_status_t uct_tcp_ep_handle_send_err(uct_tcp_ep_t *ep,
 
 static inline ssize_t uct_tcp_ep_send(uct_tcp_ep_t *ep)
 {
+    UCS_TP_SCOPE(UCS_TP_TCP_SEND, ep, 0);
     size_t sent_length;
     ucs_status_t status;
 
@@ -1128,6 +1130,7 @@ static inline ssize_t uct_tcp_ep_send(uct_tcp_ep_t *ep)
 
 static inline ssize_t uct_tcp_ep_sendv(uct_tcp_ep_t *ep)
 {
+    UCS_TP_SCOPE(UCS_TP_TCP_SENDV, ep, 0);
     uct_tcp_ep_zcopy_tx_t *ctx = (uct_tcp_ep_zcopy_tx_t*)ep->tx.buf;
     size_t sent_length;
     ucs_status_t status;
@@ -1282,6 +1285,7 @@ static inline void uct_tcp_ep_handle_recv_err(uct_tcp_ep_t *ep,
 
 static inline unsigned uct_tcp_ep_recv(uct_tcp_ep_t *ep, size_t recv_length)
 {
+    UCS_TP_SCOPE(UCS_TP_TCP_RECV, ep, recv_length);
     uct_tcp_iface_t UCS_V_UNUSED *iface = ucs_derived_of(ep->super.super.iface,
                                                          uct_tcp_iface_t);
     ucs_status_t status;
@@ -1433,6 +1437,7 @@ static inline void uct_tcp_ep_handle_put_req(uct_tcp_ep_t *ep,
 
 static unsigned uct_tcp_ep_progress_am_rx(uct_tcp_ep_t *ep)
 {
+    UCS_TP_SCOPE(UCS_TP_TCP_RX_PARSE, ep, 0);
     uct_tcp_iface_t *iface = ucs_derived_of(ep->super.super.iface,
                                             uct_tcp_iface_t);
     unsigned handled       = 0;
@@ -1937,6 +1942,7 @@ ssize_t uct_tcp_ep_am_bcopy(uct_ep_h uct_ep, uint8_t am_id,
                             uct_pack_callback_t pack_cb, void *arg,
                             unsigned flags)
 {
+    UCS_TP_SCOPE(UCS_TP_TCP_BCOPY, uct_ep, am_id);
     uct_tcp_ep_t *ep       = ucs_derived_of(uct_ep, uct_tcp_ep_t);
     uct_tcp_iface_t *iface = ucs_derived_of(uct_ep->iface, uct_tcp_iface_t);
     uct_tcp_am_hdr_t *hdr  = NULL;

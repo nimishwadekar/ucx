@@ -7,6 +7,7 @@
 #ifndef UCP_REQUEST_INL_
 #define UCP_REQUEST_INL_
 
+#include <ucs/profile/tcp_profile.h>
 #include "ucp_request.h"
 #include "ucp_worker.h"
 #include "ucp_ep.inl"
@@ -280,6 +281,7 @@ ucp_request_rndv_flush_complete(ucp_request_t *req)
 static UCS_F_ALWAYS_INLINE void
 ucp_request_complete_send(ucp_request_t *req, ucs_status_t status)
 {
+    UCS_TP_SCOPE(UCS_TP_UCP_COMPLETE, req, status);
     ucs_trace_req("completing send request %p (%p) " UCP_REQUEST_FLAGS_FMT
                   " %s",
                   req, req + 1, UCP_REQUEST_FLAGS_ARG(req->flags),

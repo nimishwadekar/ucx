@@ -7,6 +7,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "cuda_copy_ep.h"
 #include "cuda_copy_iface.h"
 #include "cuda_copy_md.h"
@@ -426,12 +427,18 @@ static UCS_F_ALWAYS_INLINE ucs_status_t uct_cuda_copy_ep_rma_short(
         goto out_pop_and_release;
     }
 
-    status = UCT_CUDADRV_FUNC_LOG_ERR(cuMemcpyAsync(dst, src, length, *stream));
+    {
+        UCS_TP_SCOPE(UCS_TP_CUDA_SUBMIT, *stream, length);
+        status = UCT_CUDADRV_FUNC_LOG_ERR(cuMemcpyAsync(dst, src, length, *stream));
+    }
     if (ucs_unlikely(status != UCS_OK)) {
         goto out_pop_and_release;
     }
 
-    status = UCT_CUDADRV_FUNC_LOG_ERR(cuStreamSynchronize(*stream));
+    {
+        UCS_TP_SCOPE(UCS_TP_CUDA_SYNC, *stream, length);
+        status = UCT_CUDADRV_FUNC_LOG_ERR(cuStreamSynchronize(*stream));
+    }
 
 out_pop_and_release:
     uct_cuda_ctx_pop_and_release(ctx.cuda_device, ctx.cuda_context);
@@ -444,6 +451,7 @@ UCS_PROFILE_FUNC(ucs_status_t, uct_cuda_copy_ep_put_short,
                  const void *buffer, unsigned length, uint64_t remote_addr,
                  uct_rkey_t rkey)
 {
+    UCS_TP_SCOPE(UCS_TP_CUDA_H2D, tl_ep, length);
     ucs_status_t status;
 
     status = uct_cuda_copy_ep_rma_short(tl_ep, (CUdeviceptr)remote_addr,
@@ -460,6 +468,7 @@ UCS_PROFILE_FUNC(ucs_status_t, uct_cuda_copy_ep_get_short,
                  uct_ep_h tl_ep, void *buffer, unsigned length,
                  uint64_t remote_addr, uct_rkey_t rkey)
 {
+    UCS_TP_SCOPE(UCS_TP_CUDA_D2H, tl_ep, length);
     ucs_status_t status;
 
     status = uct_cuda_copy_ep_rma_short(tl_ep, (CUdeviceptr)buffer,

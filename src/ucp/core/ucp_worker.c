@@ -9,6 +9,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "ucp_am.h"
 #include "ucp_ep_vfs.h"
 #include "ucp_worker.h"
@@ -3184,6 +3185,7 @@ ucs_status_t ucp_worker_address_query(ucp_address_t *address,
 
 unsigned ucp_worker_progress(ucp_worker_h worker)
 {
+    UCS_TP_SCOPE(UCS_TP_UCP_PROGRESS, worker, 0);
     unsigned count;
 
     /* worker->inprogress is used only for assertion check.

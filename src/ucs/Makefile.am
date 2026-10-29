@@ -57,6 +57,7 @@ nobase_dist_libucs_la_HEADERS = \
 	memory/memtype_cache.h \
 	memory/numa.h \
 	profile/profile_defs.h \
+	profile/tcp_profile.h \
 	profile/profile_off.h \
 	profile/profile_on.h \
 	stats/stats_fwd.h \
@@ -202,6 +203,7 @@ libucs_la_SOURCES = \
 	memory/rcache.c \
 	memory/rcache_vfs.c \
 	profile/profile.c \
+	profile/tcp_profile.c \
 	stats/stats.c \
 	sys/event_set.c \
 	sys/init.c \

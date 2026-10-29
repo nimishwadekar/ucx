@@ -8,6 +8,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "rma.h"
 #include "rma.inl"
 
@@ -297,6 +298,7 @@ ucs_status_ptr_t ucp_get_nbx(ucp_ep_h ep, void *buffer, size_t count,
                              uint64_t remote_addr, ucp_rkey_h rkey,
                              const ucp_request_param_t *param)
 {
+    UCS_TP_SCOPE(UCS_TP_UCP_GET, ep, count);
     ucp_worker_h worker  = ep->worker;
     size_t contig_length = 0;
     ucs_status_ptr_t ret;
@@ -330,6 +332,7 @@ ucs_status_ptr_t ucp_get_nbx(ucp_ep_h ep, void *buffer, size_t count,
     req->send.rma.rkey             = rkey;
     req->send.rma.remote_addr      = remote_addr;
     req->send.state.completed_size = 0;
+    UCS_TP_MARK(UCS_TP_UCP_SUBMIT, req, (uintptr_t)ep, count);
     if (UCP_DT_IS_CONTIG(datatype)) {
         contig_length = ucp_contig_dt_length(datatype, count);
     }

@@ -8,6 +8,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "tcp.h"
 
 #include <ucs/async/async.h>
@@ -436,6 +437,7 @@ static void uct_tcp_iface_handle_events(void *callback_data,
 
 unsigned uct_tcp_iface_progress(uct_iface_h tl_iface)
 {
+    UCS_TP_SCOPE(UCS_TP_TCP_PROGRESS, tl_iface, 0);
     uct_tcp_iface_t *iface = ucs_derived_of(tl_iface, uct_tcp_iface_t);
     unsigned max_events    = iface->config.max_poll;
     unsigned count         = 0;

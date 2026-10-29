@@ -8,6 +8,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include <ucp/core/ucp_ep.h>
 #include <ucp/core/ucp_ep.inl>
 #include <ucp/core/ucp_request.inl>
@@ -557,6 +558,7 @@ UCS_PROFILE_FUNC(ucs_status_ptr_t, ucp_ep_flush_nb, (ep, flags, cb),
 UCS_PROFILE_FUNC(ucs_status_ptr_t, ucp_ep_flush_nbx, (ep, param),
                  ucp_ep_h ep, const ucp_request_param_t *param)
 {
+    UCS_TP_SCOPE(UCS_TP_FLUSH, ep, 0);
     void *request;
 
     UCP_WORKER_THREAD_CS_ENTER_CONDITIONAL(ep->worker);

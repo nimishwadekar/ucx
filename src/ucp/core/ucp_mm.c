@@ -8,6 +8,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "ucp_mm.h"
 #include "ucp_context.h"
 #include "ucp_worker.h"
@@ -1308,6 +1309,7 @@ ucs_status_t ucp_mem_type_reg_buffers(ucp_worker_h worker, void *remote_addr,
                                       ucp_md_index_t md_index,
                                       ucp_mtype_pack_context_t *pack_context)
 {
+    UCS_TP_SCOPE(UCS_TP_MEM_REG, remote_addr, length);
     ucp_context_h context            = worker->context;
     const uct_md_attr_v2_t *md_attr  = &context->tl_mds[md_index].attr;
     uct_md_mkey_pack_params_t params = { .field_mask = 0 };
@@ -1380,6 +1382,7 @@ out:
 void ucp_mem_type_unreg_buffers(ucp_worker_h worker,
                                 const ucp_mtype_pack_context_t *pack_context)
 {
+    UCS_TP_SCOPE(UCS_TP_MEM_UNREG, worker, 0);
     ucp_context_h context = worker->context;
     ucp_rsc_index_t cmpt_index;
 

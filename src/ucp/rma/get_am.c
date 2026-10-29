@@ -8,6 +8,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "rma.inl"
 
 #include <ucp/core/ucp_worker.h>
@@ -27,6 +28,7 @@ static size_t ucp_proto_get_am_bcopy_pack(void *dest, void *arg)
     getreqh->req.ep_id  = ucp_send_request_get_ep_remote_id(req);
     getreqh->req.req_id = ucp_send_request_get_id(req);
     getreqh->mem_type   = req->send.rma.rkey->mem_type;
+    UCS_TP_MARK(UCS_TP_GET_ID, req, getreqh->req.req_id, getreqh->length);
 
     return sizeof(*getreqh);
 }
@@ -40,6 +42,7 @@ ucp_proto_get_am_bcopy_complete(ucp_request_t *req)
 
 static ucs_status_t ucp_proto_get_am_bcopy_progress(uct_pending_req_t *self)
 {
+    UCS_TP_SCOPE(UCS_TP_GET_REQUEST_PROGRESS, self, 0);
     ucp_request_t                   *req = ucs_container_of(self, ucp_request_t,
                                                             send.uct);
     ucp_ep_h                          ep = req->send.ep;

@@ -9,6 +9,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include "dt.h"
 #include "dt_iov.h"
 #include "dt_contig.h"
@@ -65,6 +66,7 @@ UCS_PROFILE_FUNC_VOID(ucp_mem_type_unpack,
                       ucp_worker_h worker, void *buffer, const void *recv_data,
                       size_t recv_length, ucs_memory_type_t mem_type)
 {
+    UCS_TP_SCOPE(UCS_TP_MEM_UNPACK, buffer, recv_length);
     ucp_ep_h ep = worker->mem_type_ep[mem_type];
     ucp_lane_index_t lane;
     unsigned md_index;
@@ -100,6 +102,7 @@ UCS_PROFILE_FUNC_VOID(ucp_mem_type_pack,
                       ucp_worker_h worker, void *dest, const void *src,
                       size_t length, ucs_memory_type_t mem_type)
 {
+    UCS_TP_SCOPE(UCS_TP_MEM_PACK, src, length);
     ucp_ep_h ep = worker->mem_type_ep[mem_type];
     ucp_lane_index_t lane;
     ucp_md_index_t md_index;

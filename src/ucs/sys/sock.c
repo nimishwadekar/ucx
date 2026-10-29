@@ -9,6 +9,7 @@
 #  include "config.h"
 #endif
 
+#include <ucs/profile/tcp_profile.h>
 #include <ucs/debug/log.h>
 #include <ucs/debug/assert.h>
 #include <ucs/sys/string.h>
@@ -606,6 +607,7 @@ ucs_socket_do_io_nb(int fd, void *data, size_t *length_p,
                     ucs_socket_io_func_t io_func, const char *name, int flags)
 {
     ssize_t ret = io_func(fd, data, *length_p, MSG_NOSIGNAL | flags);
+    UCS_TP_MARK(UCS_TP_SOCKET_RESULT, fd, ret, (ret < 0) ? errno : 0);
     return ucs_socket_handle_io(fd, data, *length_p, length_p, 0,
                                 ret, errno, name);
 }
@@ -639,11 +641,13 @@ ucs_socket_do_iov_nb(int fd, struct iovec *iov, size_t iov_cnt, size_t *length_p
     ssize_t ret;
 
     ret = iov_func(fd, &msg, MSG_NOSIGNAL);
+    UCS_TP_MARK(UCS_TP_SOCKET_RESULT, fd, ret, (ret < 0) ? errno : 0);
     return ucs_socket_handle_io(fd, iov, iov_cnt, length_p, 1, ret, errno, name);
 }
 
 ucs_status_t ucs_socket_send_nb(int fd, const void *data, size_t *length_p)
 {
+    UCS_TP_SCOPE(UCS_TP_SOCKET_SEND, fd, *length_p);
     return ucs_socket_do_io_nb(fd, (void*)data, length_p,
                                (ucs_socket_io_func_t)send, "send", 0);
 }
@@ -657,6 +661,7 @@ static ssize_t ucs_socket_recv_io(int fd, void *data, size_t size, int flags)
 
 ucs_status_t ucs_socket_recv_nb(int fd, void *data, int flags, size_t *length_p)
 {
+    UCS_TP_SCOPE(UCS_TP_SOCKET_RECV, fd, *length_p);
     return ucs_socket_do_io_nb(fd, data, length_p, ucs_socket_recv_io,
                                "recv", flags);
 }
@@ -675,6 +680,7 @@ ucs_status_t ucs_socket_recv(int fd, void *data, size_t length)
 ucs_status_t
 ucs_socket_sendv_nb(int fd, struct iovec *iov, size_t iov_cnt, size_t *length_p)
 {
+    UCS_TP_SCOPE(UCS_TP_SOCKET_SENDV, fd, iov_cnt);
     return ucs_socket_do_iov_nb(fd, iov, iov_cnt, length_p, sendmsg, "sendv");
 }
 
